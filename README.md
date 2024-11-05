@@ -36,7 +36,7 @@ rm com/sofe4790u/assignment2/*.class
 
 ### Running the server
 
-![alt text](image.png)
+![alt text](image-2.png)
 
 ### Running 2 Clients
 
