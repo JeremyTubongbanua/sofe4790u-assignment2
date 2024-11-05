@@ -1,3 +1,8 @@
+/*
+ * Author: Jeremy Mark Tubongbanua
+ * 100849092
+ */
+
 package com.sofe4790u.assignment2;
 
 import java.awt.Color;
@@ -6,6 +11,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * WhiteboardImpl is the server-side implementation of the Whiteboard RMI interface.
+ */
 public class WhiteboardImpl implements Whiteboard {
     private List<WhiteboardAction> actions = new ArrayList<>();
 

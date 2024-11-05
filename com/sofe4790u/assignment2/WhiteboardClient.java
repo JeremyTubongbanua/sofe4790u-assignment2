@@ -1,3 +1,7 @@
+/*
+ * Author: Jeremy Mark Tubongbanua
+ * 100849092
+ */
 package com.sofe4790u.assignment2;
 
 import java.awt.*;
@@ -8,6 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
+/**
+ * WhiteboardClient is the client-side implementation of the Whiteboard application.
+ * 
+ * This client connects to the Whiteboard server using RMI and allows the user to draw on the whiteboard.
+ * 
+ * All clients share the same whiteboard.
+ * 
+ * Clearing and undoing will affect all clients.
+ * 
+ * If one client draws and another client undos, the client will undo the action of the other client.
+ */
 public class WhiteboardClient extends JFrame {
     private Whiteboard whiteboard;
     private int thickness = 2;
@@ -17,7 +32,7 @@ public class WhiteboardClient extends JFrame {
     public WhiteboardClient() {
         try {
             Registry registry = LocateRegistry.getRegistry("localhost");
-            whiteboard = (Whiteboard) registry.lookup("Whiteboard");
+            whiteboard = (Whiteboard) registry.lookup("Whiteboard"); //  get rmi object from registry
         } catch (Exception e) {
             e.printStackTrace();
             System.exit(1);
@@ -28,6 +43,7 @@ public class WhiteboardClient extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Create the canvas
         JPanel canvas = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -59,6 +75,7 @@ public class WhiteboardClient extends JFrame {
             }
         };
 
+        // handle drawing (press and releases) on the canvas
         canvas.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 currentStrokePoints = new ArrayList<>();
@@ -78,6 +95,7 @@ public class WhiteboardClient extends JFrame {
             }
         });
 
+        // handle drags on the canvas
         canvas.addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 currentStrokePoints.add(e.getPoint());
@@ -85,6 +103,9 @@ public class WhiteboardClient extends JFrame {
             }
         });
 
+        // update and repaint the canvas every 100ms so that
+        // the canvas is always up to date with the server
+        // even when the pane is not in focus by the client user
         new Thread(() -> {
             while (true) {
                 try {
@@ -96,6 +117,7 @@ public class WhiteboardClient extends JFrame {
             }
         }).start();
 
+        // implement Clear button
         JButton clearButton = new JButton("Clear");
         clearButton.addActionListener(e -> {
             try {
@@ -106,6 +128,7 @@ public class WhiteboardClient extends JFrame {
             }
         });
 
+        // implement Undo button
         JButton undoButton = new JButton("Undo");
         undoButton.addActionListener(e -> {
             try {
@@ -116,6 +139,7 @@ public class WhiteboardClient extends JFrame {
             }
         });
 
+        // implement colors
         String[] colorNames = {"Black", "Purple", "Grey"};
         Color[] colors = {Color.BLACK, new Color(128, 0, 128), Color.GRAY};
         JComboBox<String> colorSelector = new JComboBox<>(colorNames);
@@ -124,6 +148,7 @@ public class WhiteboardClient extends JFrame {
             currentColor = colors[index];
         });
 
+        // add components to the frame
         JPanel controls = new JPanel();
         controls.add(clearButton);
         controls.add(undoButton);
